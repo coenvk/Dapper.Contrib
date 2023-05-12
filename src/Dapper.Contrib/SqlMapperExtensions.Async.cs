@@ -11,6 +11,16 @@ namespace Dapper.Contrib.Extensions
 {
     public static partial class SqlMapperExtensions
     {
+        public static async Task<int> CountAsync<T>(this IDbConnection connection, IDbTransaction transaction = null,
+            int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+            var name = GetTableName(type);
+
+            var sql = $"SELECT COUNT(1) FROM {name}";
+            return await connection.QuerySingleAsync<int>(sql, transaction, commandTimeout: commandTimeout);
+        }
+        
         /// <summary>
         /// Returns a single entity by a single id from table "Ts" asynchronously using Task. T must be of interface type. 
         /// Id must be marked with [Key] attribute.

@@ -155,6 +155,15 @@ namespace Dapper.Contrib.Extensions
             return keys.Count > 0 ? keys[0] : explicitKeys[0];
         }
 
+        public static int Count<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
+        {
+            var type = typeof(T);
+            var name = GetTableName(type);
+
+            var sql = $"SELECT COUNT(1) FROM {name}";
+            return connection.QuerySingle<int>(sql, transaction, commandTimeout: commandTimeout);
+        }
+
         /// <summary>
         /// Returns a single entity by a single id from table "Ts".  
         /// Id must be marked with [Key] attribute.
